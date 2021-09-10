@@ -1,0 +1,22 @@
+﻿@model MoviesViewModel
+
+
+
+
+
+<h1>Film Listesi</h1>
+<div id="filmler">
+    @foreach (var item in Model.Movies)
+    {
+        @await Html.PartialAsync("_movie", item)
+   }
+
+</div>
+
+@section menu
+    {
+    @*@await Html.PartialAsync("_MenuPartialView",Model.Genres)*@
+@await Component.InvokeAsync("Genres")
+
+}
+

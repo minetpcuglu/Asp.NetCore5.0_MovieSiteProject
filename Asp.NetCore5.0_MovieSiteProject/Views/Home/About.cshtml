@@ -1,0 +1,14 @@
+﻿@model List<Genre>
+
+
+@{
+    Layout = "_Layout2";
+}
+
+@section menu
+{
+    @*@await Html.PartialAsync("_MenuPartialView" ,Model)*@
+    @await Component.InvokeAsync("Genres")
+
+}
+<p>Home/About</p>
