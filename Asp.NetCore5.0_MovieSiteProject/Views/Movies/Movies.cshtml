@@ -6,10 +6,21 @@
 
 <h1>Film Listesi</h1>
 <div id="filmler">
-    @foreach (var item in Model.Movies)
+
+    @if (Model.Movies.Count() > 0)
     {
-        @await Html.PartialAsync("_movie", item)
-   }
+        @foreach (var item in Model.Movies)
+        {
+            @await Html.PartialAsync("_movie", item)
+        }
+    }
+    else
+    {
+        <div class="alert alert-warning">
+           İlgili kategoriye ait Film / Dizi Bulunamadı ...
+        </div>
+    }
+
 
 </div>
 

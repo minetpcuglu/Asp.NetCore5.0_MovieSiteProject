@@ -12,7 +12,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.ViewComponents
     {
         public IViewComponentResult Invoke()
         {
-           
+            ViewBag.selectedGenre = RouteData.Values["id"];
 
             return View(GenreRepository.Genres);
         }

@@ -8,16 +8,9 @@
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title">@Model.Title</h5>
-                    <p class="card-text">@Model.Description</p>
-                    <p class="card-text"><small class="text-muted">@Model.Director</small></p>
-                    <p class="card-text">
-                        <ul>
-                            @foreach (var item in Model.Players)
-                            {
-                                <li>@item</li>
-                            }
-                        </ul>
-                    </p>
+                  <p>
+                      <a class="btn btn-outline-primary" href="/movies/details/@Model.MovieId"> <b>Film Detayına Git...</b></a>
+                  </p>
                 </div>
             </div>
         </div>

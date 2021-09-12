@@ -13,5 +13,8 @@ namespace Asp.NetCore5._0_MovieSiteProject.Models
         public string Director { get; set; }
         public string ImageUrl { get; set; }
         public string[] Players { get; set; }
+
+        /*İlişkiler*/
+        public int GenreId { get; set; }
     }
 }

@@ -14,11 +14,11 @@ namespace Asp.NetCore5._0_MovieSiteProject.Data
         {
             _genres = new List<Genre>()
             {
-                  new Genre{Name="Dram" },
-                 new Genre{Name="Gerilim"},
-                 new Genre{Name="Bilim Kurgu"},
-                 new Genre{Name="Gizem"},
-                 new Genre{Name="Komedi"},
+                 new Genre{ GenreId=1, Name="Dram" },
+                 new Genre{GenreId=2,Name="Gerilim"},
+                 new Genre{GenreId=3,Name="Bilim Kurgu"},
+                 new Genre{GenreId=4,Name="Gizem"},
+                 new Genre{GenreId=5, Name="Komedi"},
             };
         }
 

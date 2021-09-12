@@ -43,25 +43,40 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
             return View(deger);
         }
 
-        public IActionResult List()
+        public IActionResult List(int? id , string q)
         {
-           
+            //var controller = RouteData.Values["controller"];
+            //var action = RouteData.Values["action"];
+            //var genreid = RouteData.Values["id"];
+            var kelime = HttpContext.Request.Query["q"].ToString();  //var kelime = q ile aynı  //arama butonu ayarlama get motodu ile 
+
+            var movies = MovieRepository.Movies;
+            if (id != null)
+            {
+                movies = movies.Where(m => m.GenreId == id).ToList();
+            }
+            if (!string.IsNullOrEmpty(q))
+            {
+                movies = movies.Where(t =>
+                t.Title.ToLower().Contains(q.ToLower()) ||
+                t.Description.ToLower().Contains(q.ToLower())).ToList();
+            }
 
             var model = new MoviesViewModel()
             {
-                Movies = MovieRepository.Movies
-               
+                Movies = movies
+
             };
 
-            return View("Movies",model);
+            return View("Movies", model);
         }
 
 
-        public IActionResult Details()
+        public IActionResult Details(int id)
         {
-            return View();
+            return View(MovieRepository.GetById(id));
         }
 
-     
+
     }
 }
