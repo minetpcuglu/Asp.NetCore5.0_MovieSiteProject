@@ -5,6 +5,8 @@
 
 
 <h1>Film Listesi</h1>
+
+
 <div id="filmler">
 
     @if (Model.Movies.Count() > 0)
@@ -17,17 +19,27 @@
     else
     {
         <div class="alert alert-warning">
-           İlgili kategoriye ait Film / Dizi Bulunamadı ...
+            İlgili kategoriye ait Film / Dizi Bulunamadı ...
         </div>
     }
 
 
 </div>
+@if (TempData["alertmessage"] != null)
+{
+    @section alertmessage
+    {
+        @await Html.PartialAsync("_AlertCRUDMessagePartialView", (string)TempData["alertmessage"])
+
+    }
+}
+
+
 
 @section menu
     {
     @*@await Html.PartialAsync("_MenuPartialView",Model.Genres)*@
-@await Component.InvokeAsync("Genres")
+    @await Component.InvokeAsync("Genres")
 
 }
 

@@ -10,11 +10,17 @@ namespace Asp.NetCore5._0_MovieSiteProject.ViewComponents
 {
     public class GenresViewComponent:ViewComponent
     {
+        private readonly Context _context;
+
+        public GenresViewComponent(Context context)
+        {
+            _context = context;
+        }
         public IViewComponentResult Invoke()
         {
             ViewBag.selectedGenre = RouteData.Values["id"];
 
-            return View(GenreRepository.Genres);
+            return View(_context.Genres.ToList()) ;
         }
     }
 }

@@ -10,11 +10,19 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
 {
     public class HomeController : Controller
     {
+
+        private readonly Context _context;
+
+        public HomeController(Context context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
             var model = new HomePageViewModel()
             {
-                PopulerMovies = MovieRepository.Movies
+                PopulerMovies = _context.Movies.ToList()
             };
             return View(model);
         }

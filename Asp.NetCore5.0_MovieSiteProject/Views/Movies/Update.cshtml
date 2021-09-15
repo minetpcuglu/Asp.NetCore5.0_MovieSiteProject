@@ -1,0 +1,41 @@
+﻿@model Movie
+
+
+<h1> Edit Movie</h1>
+<hr />
+
+<form method="post" asp-controller="Movies" asp-action="Update">
+    <input type="hidden" name="MovieId" value="@Model.MovieId" />
+    <div class="form-group">
+        <label asp-for="Title"> </label>
+        <input asp-for="Title" class="form-control" value="@Model.Title" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"> </label>
+        <textarea asp-for="Description" class="form-control">@Model.Description</textarea>
+        <span asp-validation-for="Description" class="text-info"></span>
+
+    </div>
+    <div class="form-group">
+        <label asp-for="Director"> </label>
+        <input asp-for="Director" class="form-control" value="@Model.Director" />
+
+    </div>
+    <div class="form-group">
+        <label asp-for="ImageUrl"> </label>
+        <input asp-for="ImageUrl" class="form-control" value="@Model.ImageUrl" />
+
+    </div>
+  
+    <div class="form-group">
+        <label asp-for="GenreId"> </label>
+        <select asp-for="GenreId" asp-items="@ViewBag.genres" class="form-control">
+            <option selected disabled="Seciniz"></option>
+
+        </select>
+        <span asp-validation-for="GenreId" class="text-warning"></span>
+    </div>
+    <button type="submit" class="btn btn-outline-primary"><b>Sumbit</b></button>
+</form>

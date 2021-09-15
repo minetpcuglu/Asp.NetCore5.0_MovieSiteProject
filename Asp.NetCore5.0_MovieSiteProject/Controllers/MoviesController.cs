@@ -1,6 +1,8 @@
 ﻿using Asp.NetCore5._0_MovieSiteProject.Data;
+using Asp.NetCore5._0_MovieSiteProject.Entity;
 using Asp.NetCore5._0_MovieSiteProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,61 +12,43 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
 {
     public class MoviesController : Controller
     {
-        //public IActionResult Index(int id)
-        //{
-        //    string filmbasliği = "Film Başlığı";
-        //    string filmaciklama = "Film Açıklama";
-        //    string filmyonetmen = "Film Yönetmen Adı";
-        //    string[] oyuncular = { "oyuncu 1" , "oyuncu 2"};
+        private readonly Context _context;
 
-        //    ViewBag.filmbasligi = filmbasliği;
-        //    ViewBag.filmaciklama = filmaciklama;
-        //    ViewBag.filmyonetmen = filmyonetmen;
-        //    ViewBag.oyuncu = oyuncular;
-        //    return View();
-        //}
+        public MoviesController(Context context)
+        {
+            _context = context;
+        }
 
         public IActionResult Index()
         {
-            string filmbasliği = "Film Başlığı";
-            string filmaciklama = "Film Açıklama";
-            string filmyonetmen = "Film Yönetmen Adı";
-            string[] oyuncular = { "oyuncu 1", "oyuncu 2" };
 
 
-            var deger = new Movie();
-
-            deger.Title = filmbasliği;
-            deger.Description = filmaciklama;
-            deger.Director = filmyonetmen;
-            deger.Players = oyuncular;
-            deger.ImageUrl = "11.22.63.jpg";
-
-            return View(deger);
+            return View();
         }
 
-        public IActionResult List(int? id , string q)
+        //var controller = RouteData.Values["controller"];
+        //var action = RouteData.Values["action"];
+        //var genreid = RouteData.Values["id"];
+        public IActionResult List(int? id, string q)
         {
-            //var controller = RouteData.Values["controller"];
-            //var action = RouteData.Values["action"];
-            //var genreid = RouteData.Values["id"];
+
             var kelime = HttpContext.Request.Query["q"].ToString();  //var kelime = q ile aynı  //arama butonu ayarlama get motodu ile 
 
-            var movies = MovieRepository.Movies;
+            var movies = _context.Movies.AsQueryable();
             if (id != null)
             {
-                movies = movies.Where(m => m.GenreId == id).ToList();
+                movies = movies.Where(m => m.GenreId == id);
             }
             if (!string.IsNullOrEmpty(q))
             {
                 movies = movies.Where(t =>
                 t.Title.ToLower().Contains(q.ToLower()) ||
-                t.Description.ToLower().Contains(q.ToLower())).ToList();
+                t.Description.ToLower().Contains(q.ToLower()));
             }
 
             var model = new MoviesViewModel()
             {
-                Movies = movies
+                Movies = movies.ToList()
 
             };
 
@@ -74,9 +58,70 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
 
         public IActionResult Details(int id)
         {
-            return View(MovieRepository.GetById(id));
+            return View(_context.Movies.Find(id));
+        }
+
+        [HttpGet]
+        public IActionResult AddMovie()
+        {
+            ViewBag.genres = new SelectList(_context.Genres.ToList(), "GenreId", "Name");
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddMovie(Movie m)
+        {
+            if (ModelState.IsValid)
+            {
+                //MovieRepository.Add(m);
+
+                _context.Add(m);
+                _context.SaveChanges();
+
+                TempData["alertmessage"] = $"{m.Title} isimli film eklendi";
+                return RedirectToAction("List");
+
+
+
+
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Update(int id)
+        {
+            ViewBag.genres = new SelectList(_context.Genres.ToList(), "GenreId", "Name");
+            return View(_context.Movies.Find(id));
+        }
+
+        [HttpPost]
+        public IActionResult Update(Movie movie)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Movies.Update(movie);
+                _context.SaveChanges();
+
+                return RedirectToAction("Details", "Movies", new { @id = movie.MovieId });
+            }
+            ViewBag.genres = new SelectList(_context.Genres.ToList(), "GenreId", "Name");
+            return View(movie);
         }
 
 
+        [HttpPost]
+        public IActionResult Delete(int MovieId, string title)
+        {
+            var entity = _context.Movies.Find(MovieId);
+            _context.Movies.Remove(entity);
+            _context.SaveChanges();
+            TempData["alertmessage"] = $"{title} isimli film silindi";
+            return RedirectToAction("List");
+
+
+        }
+
     }
 }
+

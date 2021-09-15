@@ -1,4 +1,5 @@
-﻿using Asp.NetCore5._0_MovieSiteProject.Models;
+﻿using Asp.NetCore5._0_MovieSiteProject.Entity;
+using Asp.NetCore5._0_MovieSiteProject.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.Data
                  new Genre{GenreId=3,Name="Bilim Kurgu"},
                  new Genre{GenreId=4,Name="Gizem"},
                  new Genre{GenreId=5, Name="Komedi"},
+                 new Genre{GenreId=6, Name="Fantastik"},
             };
         }
 
