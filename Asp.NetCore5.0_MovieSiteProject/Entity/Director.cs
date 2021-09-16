@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 
 namespace Asp.NetCore5._0_MovieSiteProject.Entity
 {
-    public class Genre
+    public class Director
     {
+
         [Key]
-        public int GenreId { get; set; }
-        [Required]
+        public int DirectorId { get; set; }
+
+      
         public string Name { get; set; }
 
-        public List<Movie> Movies { get; set; }
 
+        public string ImageUrl { get; set; }
+        public string Biography { get; set; }
     }
 }

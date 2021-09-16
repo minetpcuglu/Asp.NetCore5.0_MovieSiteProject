@@ -26,7 +26,8 @@ namespace Asp.NetCore5._0_MovieSiteProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<Context>(options=> options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<Context>(options => options.UseSqlServer(Configuration.GetConnectionString("MsSqlConnection")));
+             ///*options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"))*/
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
@@ -37,6 +38,7 @@ namespace Asp.NetCore5._0_MovieSiteProject
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                DataSeeding.Seed(app);
             }
             else
             {

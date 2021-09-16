@@ -16,11 +16,12 @@ namespace Asp.NetCore5._0_MovieSiteProject.Entity
 
         
         public string Description { get; set; }
-        public string Director { get; set; }
+        //public string Director { get; set; }
         public string ImageUrl { get; set; }
-  
-        /*İlişkiler*/
 
-        public int GenreId { get; set; } //null
+        /*İlişkiler*/
+      
+        public virtual Genre Genre { get; set; }
+        public int? GenreId { get; set; } //null
     }
 }

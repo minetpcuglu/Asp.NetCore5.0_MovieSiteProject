@@ -4,14 +4,16 @@ using Asp.NetCore5._0_MovieSiteProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Asp.NetCore5._0_MovieSiteProject.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20210916203341_mig2")]
+    partial class mig2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,15 +88,10 @@ namespace Asp.NetCore5._0_MovieSiteProject.Migrations
             modelBuilder.Entity("Asp.NetCore5._0_MovieSiteProject.Entity.Movie", b =>
                 {
                     b.HasOne("Asp.NetCore5._0_MovieSiteProject.Entity.Genre", "Genre")
-                        .WithMany("Movies")
+                        .WithMany()
                         .HasForeignKey("GenreId");
 
                     b.Navigation("Genre");
-                });
-
-            modelBuilder.Entity("Asp.NetCore5._0_MovieSiteProject.Entity.Genre", b =>
-                {
-                    b.Navigation("Movies");
                 });
 #pragma warning restore 612, 618
         }
