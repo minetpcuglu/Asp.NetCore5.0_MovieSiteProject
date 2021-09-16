@@ -20,8 +20,6 @@ namespace Asp.NetCore5._0_MovieSiteProject.Entity
         public string ImageUrl { get; set; }
 
         /*İlişkiler*/
-      
-        public virtual Genre Genre { get; set; }
-        public int? GenreId { get; set; } //null
+        public List<Genre> Genres { get; set; }  //çpoka çok  //tablo otamatik oluscak 
     }
 }

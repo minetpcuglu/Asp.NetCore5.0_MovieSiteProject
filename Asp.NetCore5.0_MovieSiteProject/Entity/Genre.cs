@@ -13,7 +13,9 @@ namespace Asp.NetCore5._0_MovieSiteProject.Entity
         [Required]
         public string Name { get; set; }
 
-        public List<Movie> Movies { get; set; }
+        public List<Movie> Movies { get; set; } //çoka çok tablo
+
+       
 
     }
 }

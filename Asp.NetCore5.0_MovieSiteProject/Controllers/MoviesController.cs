@@ -3,6 +3,7 @@ using Asp.NetCore5._0_MovieSiteProject.Entity;
 using Asp.NetCore5._0_MovieSiteProject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,9 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
             var movies = _context.Movies.AsQueryable();
             if (id != null)
             {
-                movies = movies.Where(m => m.GenreId == id);
+                //listeyi alma işlemini include metoduyla yapılır.
+                // her gelen filmin listesi bak ve eşleseni al listeye geri gönder
+                movies = movies.Include(m => m.Genres).Where(m => m.Genres.Any(g=>g.GenreId==id));  
             }
             if (!string.IsNullOrEmpty(q))
             {
