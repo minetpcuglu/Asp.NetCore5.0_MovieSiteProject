@@ -27,5 +27,12 @@ namespace Asp.NetCore5._0_MovieSiteProject.Data
         public DbSet<Person> Persons { get; set; }
         public DbSet<Cast> Casts { get; set; }
         public DbSet<Crew> Crews { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder) //varsayılan özellikleri ezip kendi özelliğimizi belirtcez
+        {
+            modelBuilder.Entity<Movie>().Property(m => m.Description).HasMaxLength(700);
+            modelBuilder.Entity<Movie>().Property(m => m.Title).IsRequired();
+
+        }
     }
 }
