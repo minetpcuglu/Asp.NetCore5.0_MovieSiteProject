@@ -1,10 +1,10 @@
-﻿@model Movie
+﻿@model AdminEditViewModel
 
 
 <h1> Edit Movie</h1>
 <hr />
 
-<form method="post" asp-controller="Movies" asp-action="Update">
+<form method="post" asp-controller="Admin" asp-action="MovieUpdate">
     <input type="hidden" name="MovieId" value="@Model.MovieId" />
     <div class="form-group">
         <label asp-for="Title"> </label>
@@ -24,14 +24,6 @@
         <input asp-for="ImageUrl" class="form-control" value="@Model.ImageUrl" />
 
     </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
   
-    @*<div class="form-group">
-        <label asp-for="GenreId"> </label>
-        <select asp-for="GenreId" asp-items="@ViewBag.genres" class="form-control">
-            <option selected disabled="Seciniz"></option>
-
-        </select>
-        <span asp-validation-for="GenreId" class="text-warning"></span>
-    </div>*@
-    <button type="submit" class="btn btn-outline-primary"><b>Sumbit</b></button>
 </form>
