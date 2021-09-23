@@ -46,7 +46,12 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
                 Title = m.Title,
                 Description = m.Description,
                 ImageUrl = m.ImageUrl
+                ,SelectedGenres=m.Genres
             }).FirstOrDefault(m => m.MovieId == id);
+
+
+            //ütr bilgileri tasıma
+            ViewBag.genres = _context.Genres.ToList();
 
             if (entity == null)
             {
