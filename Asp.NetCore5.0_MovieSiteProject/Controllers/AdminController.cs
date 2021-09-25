@@ -61,9 +61,9 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
         }
 
         [HttpPost]
-        public IActionResult MovieUpdate(AdminMovieViewModel model)
+        public IActionResult MovieUpdate(AdminMovieViewModel model,int[] genreIds)
         {
-            var entity = _context.Movies.Find(model.MovieId);
+            var entity = _context.Movies.Include(m=>m.Genres).FirstOrDefault(m=>m.MovieId==model.MovieId);
             if (entity == null)
             {
                 return NotFound();
@@ -71,11 +71,70 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
             entity.Title = model.Title;
             entity.Description = model.Description;
             entity.ImageUrl = model.ImageUrl;
+            entity.Genres = genreIds.Select(id => _context.Genres.FirstOrDefault(i => i.GenreId == id)).ToList(); //oluşturulan liste her id ye gelen genre nesnesine karsılık gelmelı
             _context.SaveChanges();
             return RedirectToAction("MovieList");
         }
 
-       
-   
+        public IActionResult GenreList()
+        {
+            return View(new AdminGenresViewModel
+            {
+                Genres = _context.Genres.Select(t => new AdminGenreViewModel
+                {
+                    GenreId=t.GenreId,
+                    Name=t.Name,
+                    Count=t.Movies.Count()
+                   
+                }).ToList()
+
+            });
+        }
+
+        public IActionResult GenreUpdate(int? id) //türe ait film bilgileri guncelleme 
+        {
+            if (id==null)
+            {
+                return NotFound();
+            }
+
+            var entity = _context.Genres.Select(m=> new AdminGenreEditViewModel
+            {
+            GenreId=m.GenreId,
+            Name=m.Name,
+            Movies=m.Movies.Select(i=>new AdminMovieViewModel
+            {
+                MovieId=i.MovieId,
+                Title=i.Title,
+                ImageUrl=i.ImageUrl
+
+            }).ToList()
+            }).FirstOrDefault(m => m.GenreId == id);
+
+            if (entity==null)
+            {
+                return NotFound();
+            }
+            return View(entity);
+        }
+
+
+        [HttpPost]
+        public IActionResult GenreUpdate(AdminGenreEditViewModel model)
+        {
+            var entity = _context.Genres.FirstOrDefault(m => m.GenreId == model.GenreId);
+            //if (entity == null)
+            //{
+            //    return NotFound();
+            //}
+            entity.Name = model.Name;
+          
+            _context.SaveChanges();
+            return RedirectToAction("GenreList");
+        }
+
+
+
+
     }
 }
