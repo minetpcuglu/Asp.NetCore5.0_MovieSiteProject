@@ -91,6 +91,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
             });
         }
 
+        [HttpGet]
         public IActionResult GenreUpdate(int? id) //türe ait film bilgileri guncelleme 
         {
             if (id==null)
@@ -120,14 +121,18 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
 
 
         [HttpPost]
-        public IActionResult GenreUpdate(AdminGenreEditViewModel model)
+        public IActionResult GenreUpdate(AdminGenreEditViewModel model,int[] movieIds)
         {
-            var entity = _context.Genres.FirstOrDefault(m => m.GenreId == model.GenreId);
-            //if (entity == null)
-            //{
-            //    return NotFound();
-            //}
+            var entity = _context.Genres.Include("Movies").FirstOrDefault(m => m.GenreId == model.GenreId);
+            if (entity == null)
+            {
+                return NotFound();
+            }
             entity.Name = model.Name;
+            foreach (var id in movieIds)
+            {
+                entity.Movies.Remove(entity.Movies.FirstOrDefault(m => m.MovieId == id));
+            }
           
             _context.SaveChanges();
             return RedirectToAction("GenreList");
