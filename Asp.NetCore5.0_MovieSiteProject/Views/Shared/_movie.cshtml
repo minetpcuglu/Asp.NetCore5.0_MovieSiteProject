@@ -10,13 +10,9 @@
                     <h5 class="card-title">@Model.Title</h5>
                   <div>
                       <a class="btn btn-outline-primary"  asp-controller="Movies" asp-action="Details" asp-route-id="@Model.MovieId" > <b>Detail</b></a>
-                      <a class="btn btn-outline-warning" href="/Movies/Update/@Model.MovieId"> <b>Edit</b></a>
+                   
 
-                      <form  asp-controller="Movies" asp-action="Delete" method="post" style="display:inline;">
-                          <input type="hidden" name="MovieId" value="@Model.MovieId" />
-                          <input type="hidden" name="Title" value="@Model.Title" />
-                          <button type="submit" class="btn btn-outline-danger"><b>Delete</b></button>
-                      </form>
+                     
                   </div>
                 </div>
             </div>

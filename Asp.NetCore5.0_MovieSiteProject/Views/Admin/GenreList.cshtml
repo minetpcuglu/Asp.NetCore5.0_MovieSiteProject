@@ -17,7 +17,11 @@
                     <td>@genre.Name</td>
                     <td>@genre.Count</td>
                     <td>
-                        <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                        <form action="/Admin/GenreDelete/" method="post" style="display:inline">
+                            <input  type="hidden" name="genreId" value="@genre.GenreId"/>
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                       
                         <a href="/Admin/GenreUpdate/@genre.GenreId" class="btn btn-warning btn-sm">Update</a>
                     </td>
                 </tr>

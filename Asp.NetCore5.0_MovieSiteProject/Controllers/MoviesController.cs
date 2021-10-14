@@ -64,67 +64,6 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
             return View(_context.Movies.Find(id));
         }
 
-        [HttpGet]
-        public IActionResult AddMovie()
-        {
-            ViewBag.genres = new SelectList(_context.Genres.ToList(), "GenreId", "Name");
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult AddMovie(Movie m)
-        {
-            if (ModelState.IsValid)
-            {
-                //MovieRepository.Add(m);
-
-                _context.Add(m);
-                _context.SaveChanges();
-
-                TempData["alertmessage"] = $"{m.Title} isimli film eklendi";
-                return RedirectToAction("List");
-
-
-
-
-            }
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult Update(int id)
-        {
-            ViewBag.genres = new SelectList(_context.Genres.ToList(), "GenreId", "Name");
-            return View(_context.Movies.Find(id));
-        }
-
-        [HttpPost]
-        public IActionResult Update(Movie movie)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Movies.Update(movie);
-                _context.SaveChanges();
-
-                return RedirectToAction("Details", "Movies", new { @id = movie.MovieId });
-            }
-            ViewBag.genres = new SelectList(_context.Genres.ToList(), "GenreId", "Name");
-            return View(movie);
-        }
-
-
-        [HttpPost]
-        public IActionResult Delete(int MovieId, string title)
-        {
-            var entity = _context.Movies.Find(MovieId);
-            _context.Movies.Remove(entity);
-            _context.SaveChanges();
-            TempData["alertmessage"] = $"{title} isimli film silindi";
-            return RedirectToAction("List");
-
-
-        }
-
     }
 }
 

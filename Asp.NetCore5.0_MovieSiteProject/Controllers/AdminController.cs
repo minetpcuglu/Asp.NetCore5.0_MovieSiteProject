@@ -1,10 +1,12 @@
 ﻿using Asp.NetCore5._0_MovieSiteProject.Data;
 using Asp.NetCore5._0_MovieSiteProject.Entity;
 using Asp.NetCore5._0_MovieSiteProject.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -61,7 +63,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
         }
 
         [HttpPost]
-        public IActionResult MovieUpdate(AdminMovieViewModel model,int[] genreIds)
+        public async Task<IActionResult> MovieUpdate(AdminMovieViewModel model,int[] genreIds,IFormFile file) //resim ekleme file işlemi
         {
             var entity = _context.Movies.Include(m=>m.Genres).FirstOrDefault(m=>m.MovieId==model.MovieId);
             if (entity == null)
@@ -70,7 +72,22 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
             }
             entity.Title = model.Title;
             entity.Description = model.Description;
-            entity.ImageUrl = model.ImageUrl;
+
+
+            if (file!=null) //resim gönderme işlemi
+            {
+                var extension = Path.GetExtension(file.FileName); //.jpg ... resim uzantısı gelir 
+                var fileName = string.Format($"{Guid.NewGuid()}{extension}");  //wwwroot olan img isimleriyle aynı olursa diye random bi isim belirleme
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\img",fileName);//proje yolunu root kaydetme işlemi
+                entity.ImageUrl = fileName;
+
+                using (var stream= new FileStream(path,FileMode.Create))
+                {
+                   await file.CopyToAsync(stream);
+                }
+            }
+
+
             entity.Genres = genreIds.Select(id => _context.Genres.FirstOrDefault(i => i.GenreId == id)).ToList(); //oluşturulan liste her id ye gelen genre nesnesine karsılık gelmelı
             _context.SaveChanges();
             return RedirectToAction("MovieList");
@@ -136,6 +153,71 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
           
             _context.SaveChanges();
             return RedirectToAction("GenreList");
+        }
+
+        [HttpGet]
+        public IActionResult GenreDelete()
+        {
+            return View();
+
+        }
+
+        [HttpPost]
+        public IActionResult GenreDelete(int genreId)
+        {
+                var value = _context.Genres.Find(genreId);
+                if (value!=null)
+                {
+                _context.Genres.Remove(value);
+                _context.SaveChanges();
+                }
+            return RedirectToAction("GenreList");
+        }
+
+        [HttpGet]
+        public IActionResult MovieDelete()
+        {
+            return View();
+
+        }
+
+        [HttpPost]
+        public IActionResult MovieDelete(int movieId)
+        {
+            var value = _context.Movies.Find(movieId);
+            if (value != null)
+            {
+                _context.Movies.Remove(value);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("MovieList");
+        }
+
+        [HttpGet]
+        public IActionResult AddMovie()
+        {
+            ViewBag.Genres = _context.Genres.ToList();
+            return View();
+        }
+
+
+
+        [HttpPost]
+        public IActionResult AddMovie(Movie m , int[] genreIds)
+        {
+            if (ModelState.IsValid)
+            {
+                m.Genres = new List<Genre>();
+                foreach (var genre in genreIds)
+                {
+                    m.Genres.Add(_context.Genres.FirstOrDefault(x => x.GenreId == genre));
+                }
+                _context.Movies.Add(m);
+                _context.SaveChanges();
+                return RedirectToAction("MovieList","Admin");
+            }
+            ViewBag.Genres = _context.Genres.ToList();
+            return View();
         }
 
 
