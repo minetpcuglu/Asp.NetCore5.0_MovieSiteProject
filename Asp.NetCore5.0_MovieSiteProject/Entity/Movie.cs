@@ -8,6 +8,10 @@ namespace Asp.NetCore5._0_MovieSiteProject.Entity
 {
     public class Movie
     {
+        public Movie()
+        {
+            Genres = new List<Genre>(); //ne zaman movie objesi oluşturulsa list içine boş bir genres bilgisi ekle validaiton rule
+        }
         [Key]
         public int MovieId { get; set; }
 

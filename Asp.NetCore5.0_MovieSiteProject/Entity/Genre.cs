@@ -8,6 +8,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.Entity
 {
     public class Genre
     {
+
         [Key]
         public int GenreId { get; set; }
         [Required]
