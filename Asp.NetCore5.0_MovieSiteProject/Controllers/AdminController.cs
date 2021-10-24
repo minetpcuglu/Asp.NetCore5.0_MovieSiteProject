@@ -47,9 +47,8 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
                 MovieId = m.MovieId,
                 Title = m.Title,
                 Description = m.Description,
-                ImageUrl = m.ImageUrl
-                ,
-                SelectedGenres = m.Genres
+                ImageUrl = m.ImageUrl,
+                GenreIds = m.Genres.Select(i => i.GenreId).ToArray()
             }).FirstOrDefault(m => m.MovieId == id);
 
 
@@ -64,39 +63,49 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> MovieUpdate(AdminMovieViewModel model, int[] genreIds, IFormFile file) //resim ekleme file işlemi
+        public async Task<IActionResult> MovieUpdate(AdminEditViewModel model, int[] genreIds, IFormFile file) //resim ekleme file işlemi
         {
-            var entity = _context.Movies.Include(m => m.Genres).FirstOrDefault(m => m.MovieId == model.MovieId);
-            if (entity == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
-            }
-            entity.Title = model.Title;
-            entity.Description = model.Description;
 
-
-            if (file != null) //resim gönderme işlemi
-            {
-                var extension = Path.GetExtension(file.FileName); //.jpg ... resim uzantısı gelir 
-                var fileName = string.Format($"{Guid.NewGuid()}{extension}");  //wwwroot olan img isimleriyle aynı olursa diye random bi isim belirleme
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\img", fileName);//proje yolunu root kaydetme işlemi
-                entity.ImageUrl = fileName;
-
-                using (var stream = new FileStream(path, FileMode.Create))
+                var entity = _context.Movies.Include(m => m.Genres).FirstOrDefault(m => m.MovieId == model.MovieId);
+                if (entity == null)
                 {
-                    await file.CopyToAsync(stream);
+                    return NotFound();
                 }
+                entity.Title = model.Title;
+                entity.Description = model.Description;
+
+
+                if (file != null) //resim gönderme işlemi
+                {
+                    var extension = Path.GetExtension(file.FileName); //.jpg ... resim uzantısı gelir 
+                    var fileName = string.Format($"{Guid.NewGuid()}{extension}");  //wwwroot olan img isimleriyle aynı olursa diye random bi isim belirleme
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\img", fileName);//proje yolunu root kaydetme işlemi
+                    entity.ImageUrl = fileName;
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                }
+
+
+                entity.Genres = genreIds.Select(id => _context.Genres.FirstOrDefault(i => i.GenreId == id)).ToList(); //oluşturulan liste her id ye gelen genre nesnesine karsılık gelmelı
+                _context.SaveChanges();
+                return RedirectToAction("MovieList");
             }
-
-
-            entity.Genres = genreIds.Select(id => _context.Genres.FirstOrDefault(i => i.GenreId == id)).ToList(); //oluşturulan liste her id ye gelen genre nesnesine karsılık gelmelı
-            _context.SaveChanges();
-            return RedirectToAction("MovieList");
+            ViewBag.Genres = _context.Genres.ToList();
+            return View(model);
         }
 
         public IActionResult GenreList()
         {
-            return View(new AdminGenresViewModel
+            return View(GetGenres());
+        }
+        private AdminGenresViewModel GetGenres()  //yeni bi obje tanımlama işlemi
+        {
+          return new AdminGenresViewModel
             {
                 Genres = _context.Genres.Select(t => new AdminGenreViewModel
                 {
@@ -106,7 +115,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
 
                 }).ToList()
 
-            });
+            };
         }
 
         [HttpGet]
@@ -141,6 +150,8 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
         [HttpPost]
         public IActionResult GenreUpdate(AdminGenreEditViewModel model, int[] movieIds)
         {
+
+
             var entity = _context.Genres.Include("Movies").FirstOrDefault(m => m.GenreId == model.GenreId);
             if (entity == null)
             {
@@ -154,6 +165,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
 
             _context.SaveChanges();
             return RedirectToAction("GenreList");
+
         }
 
         [HttpGet]
@@ -198,7 +210,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
         public IActionResult AddMovie()
         {
             ViewBag.Genres = _context.Genres.ToList();
-            return View(new  AdminCreateValidationViewModel());
+            return View(new AdminCreateValidationViewModel());
         }
 
 
@@ -206,7 +218,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
         [HttpPost]
         public IActionResult AddMovie(AdminCreateValidationViewModel t)
         {
-            if (t.Title!=null && t.Title.Contains("@"))
+            if (t.Title != null && t.Title.Contains("@"))
             {
                 ModelState.AddModelError("", "Film başlığı @ işareti içeremez");
             }
@@ -230,21 +242,37 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
                     ImageUrl = "Null"
                 };
 
-        
-            foreach (var genre in t.GenreIds)
-            {
-                entity.Genres.Add(_context.Genres.FirstOrDefault(x => x.GenreId == genre));
+
+                foreach (var genre in t.GenreIds)
+                {
+                    entity.Genres.Add(_context.Genres.FirstOrDefault(x => x.GenreId == genre));
+                }
+                _context.Movies.Add(entity);
+                _context.SaveChanges();
+                return RedirectToAction("MovieList", "Admin");
             }
-            _context.Movies.Add(entity);
-            _context.SaveChanges();
-            return RedirectToAction("MovieList", "Admin");
-        }
-             ViewBag.Genres = _context.Genres.ToList();
+            ViewBag.Genres = _context.Genres.ToList();
             return View(t); //sayfa yenilediginde aynı bilgilerin gelmesi için
+        }
+
+        [HttpPost]
+        public IActionResult GenreCreate(AdminGenresViewModel model )
+        {
+            if (model.Name != null && model.Name.Length<3)
+            {
+                ModelState.AddModelError("Name", "Tür adı Min 3 karakter içermelidir.");
+            }
+            if (ModelState.IsValid)
+            {
+                _context.Genres.Add(new Genre { Name=model.Name});
+                _context.SaveChanges();
+                return RedirectToAction("GenreList");
+            }
+            return View("GenreList",GetGenres());
+        }
+
+
+
+
     }
-
-
-
-
-}
 }
