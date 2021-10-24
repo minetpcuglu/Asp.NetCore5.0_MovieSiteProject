@@ -150,7 +150,10 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
         [HttpPost]
         public IActionResult GenreUpdate(AdminGenreEditViewModel model, int[] movieIds)
         {
+            if (ModelState.IsValid)
+            {
 
+           
 
             var entity = _context.Genres.Include("Movies").FirstOrDefault(m => m.GenreId == model.GenreId);
             if (entity == null)
@@ -165,7 +168,8 @@ namespace Asp.NetCore5._0_MovieSiteProject.Controllers
 
             _context.SaveChanges();
             return RedirectToAction("GenreList");
-
+            }
+            return View(model);
         }
 
         [HttpGet]

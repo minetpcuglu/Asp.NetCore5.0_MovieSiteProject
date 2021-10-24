@@ -23,6 +23,7 @@ namespace Asp.NetCore5._0_MovieSiteProject.Models
     public class AdminGenreEditViewModel
     {
         public int GenreId { get; set; }
+        [Required(ErrorMessage = "Tür Bilgisi Boş Bırakılamaz")]
         public string Name { get; set; }
         public List<AdminMovieViewModel> Movies { get; set; }
     }
